@@ -53,6 +53,21 @@ font-family: "Jura";
   -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
   animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
+#upload-svg{
+    width: 90%;
+    margin-top: 25%;
+margin-bottom: 5%;
+animation-name: floating; 
+    animation-duration: 3s; 
+    animation-iteration-count: infinite; 
+    animation-timing-function: ease-in-out; 
+    animation-delay: 1s;
+}
+@keyframes floating { 
+    0% { transform: translate(0,  0px); } 
+    50%  { transform: translate(0, 20px); } 
+    100%   { transform: translate(0, -0px); }     
+} 
     </style>
 </head>
 <body>
@@ -97,7 +112,7 @@ font-family: "Jura";
 <div class="main container">
 <div class="row">
     <div class="col">
-<img src="{{ url_for('static', filename='image-upload.svg') }}" alt="..." width="90%">
+<img id="upload-svg" src="{{ url_for('static', filename='image-upload.svg') }}" alt="..." width="90%">
     </div>
     <div class="col">
         <h2>Upload your image</h2>
@@ -182,14 +197,11 @@ function upload(){
         console.log("upload is " + progress +" done");
         var rprg = progress.toFixed(2);
         document.getElementById("ploaded").innerHTML = `${rprg}% Complete`;
-        if(progress==100)
-        {
-            document.getElementById("rocket").style.display="none";
-            document.getElementById("checkmark").style.display="block";
-            setTimeout(()=>{
-              document.getElementById("anotherupload").style.display="block";
-            },3000);
-        }
+        // if(progress==100)
+        // {
+        //     document.getElementById("rocket").style.display="none";
+        //     document.getElementById("checkmark").style.display="block";
+        // }
     },function (error) {
         //handle error here
         console.log(error.message);
@@ -225,6 +237,9 @@ function backend_upload(imgName,name,durl){
     // Print result
     document.getElementById("snackbar").innerHTML = result.message;
     toast();
+    document.getElementById("rocket").style.display="none";
+    document.getElementById("checkmark").style.display="block";
+    document.getElementById("anotherupload").style.display="block";
     console.log(result);
 });
 }
