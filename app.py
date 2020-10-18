@@ -17,7 +17,8 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route('/')
 def home():
-    return render_template("home.html")
+    images = db.execute("SELECT * FROM image").fetchall()
+    return render_template("home.html",images=images)
 
 @app.route('/upload')
 def uploadpage():
