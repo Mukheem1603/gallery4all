@@ -22,3 +22,16 @@ def home():
 @app.route('/upload')
 def uploadpage():
     return render_template("uploadpage.html")
+
+@app.route('/imgupload',methods=["POST"])
+def imgupload():
+    try:
+        data = request.get_json()
+        imagename = data["imagename"]
+        artistname = data["artistname"]
+        url = data["downloadurl"]
+        db.execute("INSERT INTO image (name,artist,link) VALUES (:n, :a, :l)",{"n":imagename,"a":artistname,"l":url})
+        db.commit()
+    except:
+        data = None
+    return jsonify({"message":"Successful"})

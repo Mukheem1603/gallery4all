@@ -32,6 +32,27 @@ font-family: "Jura";
     .main{
       margin-top: 1%;
     }
+    #snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
     </style>
 </head>
 <body>
@@ -83,9 +104,9 @@ font-family: "Jura";
         <p id="anotherupload" style="display: none;"><br><button onclick="location.reload()" class="btn btn-outline-light">Upload Another Image</button></p><br>
        <div class="container">
         <form method="POST">
-          <label style="cursor: pointer;" for="audfileinput" id="alabel">
+          <label style="cursor: pointer;" for="imgfileinput" id="alabel">
             <img src="{{ url_for('static', filename='upload.png') }}" alt="upload">
-              <input type="file" id="audfileinput" style="display: none;" accept=".jpg,.jpeg,.png,.gif">
+              <input type="file" id="imgfileinput" style="display: none;" accept=".jpg,.jpeg,.png,.gif">
           </label>
           <p id="filename"></p>
           <p id="ploaded"></p>
@@ -99,8 +120,13 @@ font-family: "Jura";
 </div>
 </div>
 <script>
-    document.getElementById('audfileinput').onchange = function (){
-  var name = document.getElementById('audfileinput'); 
+function toast() {
+  var x = document.getElementById("snackbar");
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+    document.getElementById('imgfileinput').onchange = function (){
+  var name = document.getElementById('imgfileinput'); 
   var size = name.files.item(0).size/1024;
   size=size/1024;
   size= size.toFixed(2);
@@ -141,12 +167,12 @@ upload();
 
 function upload(){
 	// var name=prompt("name:");
-	var audio=document.getElementById("audfileinput").files[0];
-  var audioName=document.getElementById("image-name").value;
+	var img=document.getElementById("imgfileinput").files[0];
+  var imgName=document.getElementById("image-name").value;
   var name=document.getElementById("artist-name").value;
-    var storageRef=firebase.storage().ref(`${name}/${audioName}`);
+    var storageRef=firebase.storage().ref(`${name}/${imgName}`);
     document.getElementById('rocket').style.display="block";
-    var uploadTask=storageRef.put(audio);
+    var uploadTask=storageRef.put(img);
 
     uploadTask.on('state_changed',function (snapshot) {
         //observe state change events such as progress , pause ,resume
@@ -172,13 +198,37 @@ function upload(){
 
         uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             //get your upload image url here...
-        //   backend_upload(audioName,size,downloadURL)
+          backend_upload(imgName,name,downloadURL)
             console.log(downloadURL);
         });
     });
 
     
 }
+
+function backend_upload(imgName,name,durl){
+  fetch('/imgupload', {
+  method: 'POST',
+  credentials: "include",
+  body: JSON.stringify({
+      imagename: `${imgName}`,
+      artistname: `${name}`,
+      downloadurl: `${durl}`
+  }),
+  cache: "no-cache",
+    headers: new Headers({
+      "content-type": "application/json"
+    })
+})
+.then(response => response.json())
+.then(result => {
+    // Print result
+    document.getElementById("snackbar").innerHTML = result.message;
+    toast();
+    console.log(result);
+});
+}
+
 
 </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
