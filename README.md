@@ -12,3 +12,5 @@ $ flask run
 - On the landing page or the Home page all the existing i.e uploaded images are displayed.
 - To upload images, click on `Upload` button present in the navigation bar.Now click the upload icon and select the image file. Edit the image name and enter the artist name.
 - After a successful upload, you will be notified with a message "Successful" at the bottom of your screen.
+
+[Live Demo](https://gallery4all.herokuapp.com/)
